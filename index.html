@@ -79,17 +79,18 @@
         .then(function(data) {
           // Verificar si el DNI existe en algún registro
           var dniExiste = false;
+          var datos = {};
           for (var key in data) {
             if (data.hasOwnProperty(key) && data[key].dni === dniInput) {
               dniExiste = true;
+              datos = data[key];
               break;
             }
           }
 
           if (dniExiste) {
-            alert("El número de DNI ya existe en un registro.");
-            // Redirigir al usuario a login.html
-            window.location.href = "login.html";
+            // Mostrar un mensaje y los datos del alumno existente
+            mostrarDatos(datos, "El número de DNI ya existe en un registro.");
           } else {
             // Habilitar el formulario de carga de datos
             document.getElementById("registroForm").innerHTML = `
@@ -112,7 +113,7 @@
             document.getElementById("registroForm").addEventListener("submit", function(event) {
               event.preventDefault(); // Evitar que se envíe el formulario automáticamente
 
-              var datos = {
+              datos = {
                 dni: dniInput,
                 nombreyapellido: document.getElementById("nombreyapellido").value,
                 mail: document.getElementById("mail").value,
@@ -127,17 +128,7 @@
               })
               .then(function(response) {
                 // Mostrar un mensaje de bienvenida y los datos del alumno
-                document.body.innerHTML = `
-                  <h1>¡Registro exitoso!</h1>
-                  <p>Bienvenido, ${datos.nombreyapellido}.</p>
-                  <p>Estos son tus datos:</p>
-                  <ul>
-                    <li><strong>DNI:</strong> ${datos.dni}</li>
-                    <li><strong>Email:</strong> ${datos.mail}</li>
-                    <li><strong>Curso:</strong> ${datos.curso}</li>
-                  </ul>
-                  <button class="btn-volver" onclick="window.location.href='http://mn22.pythonanywhere.com/'">Volver a la página de inicio</button>
-                `;
+                mostrarDatos(datos, "¡Registro exitoso!");
               })
               .catch(function(error) {
                 alert("Ha ocurrido un error. Por favor, intenta nuevamente.");
@@ -151,6 +142,20 @@
           console.error(error);
         });
     });
+
+    function mostrarDatos(datos, mensaje) {
+      document.body.innerHTML = `
+        <h1>${mensaje}</h1>
+        <p>Bienvenido, ${datos.nombreyapellido}.</p>
+        <p>Estos son tus datos:</p>
+        <ul>
+          <li><strong>DNI:</strong> ${datos.dni}</li>
+          <li><strong>Email:</strong> ${datos.mail}</li>
+          <li><strong>Curso:</strong> ${datos.curso}</li>
+        </ul>
+        <button class="btn-volver" onclick="window.location.href='http://mn22.pythonanywhere.com/'">Volver a la página de inicio</button>
+      `;
+    }
   </script>
 </body>
 </html>
